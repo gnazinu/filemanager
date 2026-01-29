@@ -136,3 +136,31 @@ Sistema web donde clientes suben recibos en PDF y el contador los gestiona con e
 - Categorías de gastos
 - Comentarios en recibos
 
+---
+
+## 8. Creación del Usuario Administrador
+
+Para crear el primer usuario administrador:
+
+1. Regístrate normalmente en la aplicación con el email del contador
+2. Ve a Cloud > Database > Tables > user_roles
+3. Edita el registro del usuario y cambia el rol de 'client' a 'admin'
+4. También en Cloud > Database > Tables > profiles, cambia account_status a 'approved'
+5. Cierra sesión y vuelve a iniciar sesión
+
+---
+
+## 9. Flujo de Uso
+
+### Para el Contador (Admin):
+1. Iniciar sesión
+2. Ver Dashboard con resumen de recibos
+3. Aprobar nuevos clientes en "Gestión de Clientes"
+4. Revisar y cambiar estado de recibos en "Todos los Recibos"
+
+### Para los Clientes:
+1. Registrarse (cuenta queda pendiente)
+2. Esperar aprobación del admin
+3. Una vez aprobado, subir recibos en "Subir Recibo"
+4. Ver historial en "Mis Recibos"
+

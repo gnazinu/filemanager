@@ -15,6 +15,7 @@ import {
   ChevronLeft,
 } from 'lucide-react';
 
+
 interface NavItem {
   label: string;
   href: string;
@@ -29,7 +30,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const clientNavItems: NavItem[] = [
-    { label: 'Mis Recibos', href: '/my-receipts', icon: FileText },
+    { label: 'Mis Recibos', href: '/my-receipts', icon: Receipt },
     { label: 'Subir Recibo', href: '/upload', icon: Upload },
   ];
 
@@ -60,9 +61,9 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           {isSidebarOpen && (
             <Link to="/" className="flex items-center gap-2">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-                <FileText className="h-4 w-4 text-primary-foreground" />
+                <Receipt className="h-4 w-4 text-primary-foreground" />
               </div>
-              <span className="font-semibold">Recibos</span>
+              <span className="font-semibold">GestorDoc</span>
             </Link>
           )}
           <Button
@@ -126,9 +127,9 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         <header className="flex h-16 items-center justify-between border-b bg-card px-4 lg:hidden">
           <Link to="/" className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-              <FileText className="h-4 w-4 text-primary-foreground" />
+              <Receipt className="h-4 w-4 text-primary-foreground" />
             </div>
-            <span className="font-semibold">Recibos</span>
+            <span className="font-semibold">GestorDoc</span>
           </Link>
           <Button
             variant="ghost"

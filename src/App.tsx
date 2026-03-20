@@ -25,7 +25,15 @@ import AdminClients from "./pages/admin/AdminClients";
 import NotFound from "./pages/NotFound";
 import Index from "./pages/Index";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 30_000,       // 30s antes de considerar datos desactualizados
+      gcTime: 5 * 60_000,      // 5 min en caché tras desmontar el componente
+      retry: 1,                // Solo 1 reintento en caso de error
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>

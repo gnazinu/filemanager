@@ -41,6 +41,19 @@ import { useToast } from '@/hooks/use-toast';
 type SortField = 'expense_date' | 'created_at';
 type SortDirection = 'asc' | 'desc';
 
+// Skeleton row for loading state
+function SkeletonRow() {
+  return (
+    <TableRow>
+      {[...Array(6)].map((_, i) => (
+        <TableCell key={i}>
+          <div className="h-4 animate-pulse rounded bg-muted" style={{ width: `${60 + Math.random() * 30}%` }} />
+        </TableCell>
+      ))}
+    </TableRow>
+  );
+}
+
 export default function AdminReceipts() {
   const [searchParams, setSearchParams] = useSearchParams();
   const queryClient = useQueryClient();
@@ -279,8 +292,22 @@ export default function AdminReceipts() {
           </CardHeader>
           <CardContent>
             {isLoading ? (
-              <div className="flex items-center justify-center py-8">
-                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Cliente</TableHead>
+                      <TableHead>Archivo</TableHead>
+                      <TableHead>Fecha de gasto</TableHead>
+                      <TableHead>Fecha de subida</TableHead>
+                      <TableHead>Estado</TableHead>
+                      <TableHead className="text-right">Acciones</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {[1, 2, 3, 4, 5].map((i) => <SkeletonRow key={i} />)}
+                  </TableBody>
+                </Table>
               </div>
             ) : receipts && receipts.length > 0 ? (
               <div className="overflow-x-auto">

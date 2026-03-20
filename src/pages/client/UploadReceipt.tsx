@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { Upload as UploadIcon, FileText, X, Loader2, CheckCircle } from 'lucide-react';
+import { Upload as UploadIcon, FileText, X, Loader2, CheckCircle, PartyPopper } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 
@@ -19,12 +19,13 @@ export default function UploadReceipt() {
   const { toast } = useToast();
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  
+
   const [file, setFile] = useState<File | null>(null);
   const [expenseDate, setExpenseDate] = useState('');
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isDragOver, setIsDragOver] = useState(false);
+  const [uploadSuccess, setUploadSuccess] = useState(false);
 
   const validateFile = (file: File): string | null => {
     if (file.type !== 'application/pdf') {
@@ -52,11 +53,8 @@ export default function UploadReceipt() {
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragOver(false);
-    
     const droppedFile = e.dataTransfer.files[0];
-    if (droppedFile) {
-      handleFileSelect(droppedFile);
-    }
+    if (droppedFile) handleFileSelect(droppedFile);
   };
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -71,26 +69,22 @@ export default function UploadReceipt() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
-    if (selectedFile) {
-      handleFileSelect(selectedFile);
-    }
+    if (selectedFile) handleFileSelect(selectedFile);
   };
 
   const handleRemoveFile = () => {
     setFile(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!file || !expenseDate || !user) {
       toast({
         variant: 'destructive',
         title: 'Error',
-        description: 'Por favor complete todos los campos',
+        description: 'Por favor completa todos los campos',
       });
       return;
     }
@@ -99,23 +93,17 @@ export default function UploadReceipt() {
     setUploadProgress(0);
 
     try {
-      // Generate secure filename
       const fileExt = file.name.split('.').pop();
       const secureFilename = `${crypto.randomUUID()}.${fileExt}`;
       const storagePath = `${user.id}/${secureFilename}`;
 
-      // Simulate progress for better UX
       const progressInterval = setInterval(() => {
         setUploadProgress((prev) => Math.min(prev + 10, 90));
       }, 100);
 
-      // Upload file to storage
       const { error: uploadError } = await supabase.storage
         .from('receipts')
-        .upload(storagePath, file, {
-          contentType: 'application/pdf',
-          upsert: false,
-        });
+        .upload(storagePath, file, { contentType: 'application/pdf', upsert: false });
 
       clearInterval(progressInterval);
 
@@ -123,7 +111,6 @@ export default function UploadReceipt() {
 
       setUploadProgress(95);
 
-      // Create receipt record
       const { error: insertError } = await supabase.from('receipts').insert({
         user_id: user.id,
         original_filename: file.name,
@@ -133,19 +120,12 @@ export default function UploadReceipt() {
       });
 
       if (insertError) {
-        // Rollback: delete uploaded file
         await supabase.storage.from('receipts').remove([storagePath]);
         throw insertError;
       }
 
       setUploadProgress(100);
-
-      toast({
-        title: 'Recibo subido',
-        description: 'Tu recibo ha sido subido exitosamente',
-      });
-
-      navigate('/my-receipts');
+      setUploadSuccess(true);
     } catch (error) {
       console.error('Upload error:', error);
       toast({
@@ -158,6 +138,44 @@ export default function UploadReceipt() {
     }
   };
 
+  // ─── Success Screen ───────────────────────────────────────────────
+  if (uploadSuccess) {
+    return (
+      <AppLayout>
+        <div className="mx-auto flex max-w-md flex-col items-center justify-center py-16 text-center">
+          <div className="mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-green-100">
+            <PartyPopper className="h-12 w-12 text-green-600" />
+          </div>
+          <h1 className="mb-2 text-2xl font-bold">¡Recibo enviado!</h1>
+          <p className="mb-2 text-muted-foreground">
+            Tu recibo fue subido exitosamente y está pendiente de revisión.
+          </p>
+          <p className="mb-8 text-sm text-muted-foreground">
+            Pronto un administrador lo revisará y actualizará su estado.
+          </p>
+          <div className="flex w-full flex-col gap-3">
+            <Button onClick={() => navigate('/my-receipts')} className="w-full">
+              Ver mis recibos
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setUploadSuccess(false);
+                setFile(null);
+                setExpenseDate('');
+                setUploadProgress(0);
+              }}
+              className="w-full"
+            >
+              Subir otro recibo
+            </Button>
+          </div>
+        </div>
+      </AppLayout>
+    );
+  }
+
+  // ─── Upload Form ──────────────────────────────────────────────────
   return (
     <AppLayout>
       <div className="mx-auto max-w-2xl space-y-6">
@@ -201,7 +219,7 @@ export default function UploadReceipt() {
                     className="hidden"
                     disabled={isUploading}
                   />
-                  
+
                   {file ? (
                     <div className="flex flex-col items-center gap-2">
                       <CheckCircle className="h-10 w-10 text-green-500" />

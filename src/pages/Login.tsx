@@ -6,7 +6,25 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, FileText } from 'lucide-react';
+import { Loader2, Receipt } from 'lucide-react';
+
+// Map Supabase error messages to friendly Spanish messages
+function getFriendlyError(message: string): string {
+  const lower = message.toLowerCase();
+  if (lower.includes('invalid login credentials') || lower.includes('invalid credentials')) {
+    return 'El correo o la contraseña son incorrectos. Intenta de nuevo.';
+  }
+  if (lower.includes('email not confirmed')) {
+    return 'Debes confirmar tu correo electrónico antes de iniciar sesión. Revisa tu bandeja de entrada.';
+  }
+  if (lower.includes('too many requests') || lower.includes('rate limit')) {
+    return 'Demasiados intentos fallidos. Espera unos minutos antes de intentarlo de nuevo.';
+  }
+  if (lower.includes('user not found')) {
+    return 'No encontramos una cuenta con ese correo. ¿Quizás quieres registrarte?';
+  }
+  return 'Ocurrió un error al iniciar sesión. Intenta de nuevo.';
+}
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -28,15 +46,15 @@ export default function Login() {
     if (error) {
       toast({
         variant: 'destructive',
-        title: 'Error al iniciar sesión',
-        description: error.message,
+        title: 'No se pudo iniciar sesión',
+        description: getFriendlyError(error.message),
       });
       setIsLoading(false);
       return;
     }
 
     toast({
-      title: 'Bienvenido',
+      title: '¡Bienvenido!',
       description: 'Has iniciado sesión correctamente.',
     });
     navigate(from, { replace: true });
@@ -46,12 +64,12 @@ export default function Login() {
     <div className="flex min-h-screen items-center justify-center bg-muted/30 px-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary">
-            <FileText className="h-6 w-6 text-primary-foreground" />
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-primary shadow-md">
+            <Receipt className="h-7 w-7 text-primary-foreground" />
           </div>
-          <CardTitle className="text-2xl font-bold">Gestor de Recibos</CardTitle>
+          <CardTitle className="text-2xl font-bold">GestorDoc</CardTitle>
           <CardDescription>
-            Ingresa tus credenciales para acceder
+            Ingresa tus datos para acceder a tu cuenta
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
@@ -66,6 +84,7 @@ export default function Login() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 disabled={isLoading}
+                autoComplete="email"
               />
             </div>
             <div className="space-y-2">
@@ -78,6 +97,7 @@ export default function Login() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 disabled={isLoading}
+                autoComplete="current-password"
               />
             </div>
           </CardContent>
@@ -89,7 +109,7 @@ export default function Login() {
             <p className="text-center text-sm text-muted-foreground">
               ¿No tienes cuenta?{' '}
               <Link to="/register" className="font-medium text-primary hover:underline">
-                Regístrate
+                Regístrate aquí
               </Link>
             </p>
           </CardFooter>

@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, FileText } from 'lucide-react';
+import { Loader2, Receipt, MailCheck } from 'lucide-react';
 import { z } from 'zod';
 
 const registerSchema = z.object({
@@ -19,6 +19,17 @@ const registerSchema = z.object({
   path: ['confirmPassword'],
 });
 
+function getFriendlyRegisterError(message: string): string {
+  const lower = message.toLowerCase();
+  if (lower.includes('user already registered') || lower.includes('already exists')) {
+    return 'Ya existe una cuenta con ese correo electrónico. ¿Quieres iniciar sesión?';
+  }
+  if (lower.includes('password')) {
+    return 'La contraseña no cumple los requisitos de seguridad. Usa al menos 6 caracteres.';
+  }
+  return 'Ocurrió un error al crear tu cuenta. Intenta de nuevo.';
+}
+
 export default function Register() {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
@@ -26,6 +37,7 @@ export default function Register() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
   const { signUp } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -35,7 +47,7 @@ export default function Register() {
     setErrors({});
 
     const result = registerSchema.safeParse({ fullName, email, password, confirmPassword });
-    
+
     if (!result.success) {
       const fieldErrors: Record<string, string> = {};
       result.error.errors.forEach((err) => {
@@ -52,32 +64,66 @@ export default function Register() {
     const { error } = await signUp(email, password, fullName);
 
     if (error) {
+      // Check if it's an "email confirmation required" flow (not a real error)
+      if (error.message.toLowerCase().includes('email') && error.message.toLowerCase().includes('confirm')) {
+        setEmailSent(true);
+        setIsLoading(false);
+        return;
+      }
       toast({
         variant: 'destructive',
-        title: 'Error al registrarse',
-        description: error.message,
+        title: 'Error al crear la cuenta',
+        description: getFriendlyRegisterError(error.message),
       });
       setIsLoading(false);
       return;
     }
 
-    toast({
-      title: 'Registro exitoso',
-      description: 'Tu cuenta ha sido creada. Un administrador revisará tu solicitud.',
-    });
     navigate('/pending-approval');
   };
+
+  // Email confirmation screen
+  if (emailSent) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-muted/30 px-4">
+        <Card className="w-full max-w-md text-center">
+          <CardHeader>
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-blue-100">
+              <MailCheck className="h-8 w-8 text-blue-600" />
+            </div>
+            <CardTitle className="text-2xl font-bold">Revisa tu correo</CardTitle>
+            <CardDescription className="text-base">
+              Enviamos un enlace de confirmación a{' '}
+              <span className="font-medium text-foreground">{email}</span>
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3 text-sm text-muted-foreground">
+            <p>Haz clic en el enlace del correo para activar tu cuenta.</p>
+            <p>
+              Si no lo ves en unos minutos, revisa también tu carpeta de{' '}
+              <strong>spam o correo no deseado</strong>.
+            </p>
+          </CardContent>
+          <CardFooter className="flex flex-col gap-2">
+            <Button variant="outline" className="w-full" asChild>
+              <Link to="/login">Volver al inicio de sesión</Link>
+            </Button>
+          </CardFooter>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-muted/30 px-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary">
-            <FileText className="h-6 w-6 text-primary-foreground" />
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-primary shadow-md">
+            <Receipt className="h-7 w-7 text-primary-foreground" />
           </div>
-          <CardTitle className="text-2xl font-bold">Crear cuenta</CardTitle>
+          <CardTitle className="text-2xl font-bold">GestorDoc</CardTitle>
           <CardDescription>
-            Regístrate para comenzar a gestionar tus recibos
+            Completa los datos para solicitar acceso
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
@@ -92,6 +138,7 @@ export default function Register() {
                 onChange={(e) => setFullName(e.target.value)}
                 required
                 disabled={isLoading}
+                autoComplete="name"
               />
               {errors.fullName && (
                 <p className="text-sm text-destructive">{errors.fullName}</p>
@@ -107,6 +154,7 @@ export default function Register() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 disabled={isLoading}
+                autoComplete="email"
               />
               {errors.email && (
                 <p className="text-sm text-destructive">{errors.email}</p>
@@ -122,6 +170,7 @@ export default function Register() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 disabled={isLoading}
+                autoComplete="new-password"
               />
               {errors.password && (
                 <p className="text-sm text-destructive">{errors.password}</p>
@@ -137,6 +186,7 @@ export default function Register() {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
                 disabled={isLoading}
+                autoComplete="new-password"
               />
               {errors.confirmPassword && (
                 <p className="text-sm text-destructive">{errors.confirmPassword}</p>
@@ -151,7 +201,7 @@ export default function Register() {
             <p className="text-center text-sm text-muted-foreground">
               ¿Ya tienes cuenta?{' '}
               <Link to="/login" className="font-medium text-primary hover:underline">
-                Inicia sesión
+                Inicia sesión aquí
               </Link>
             </p>
           </CardFooter>

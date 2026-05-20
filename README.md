@@ -1,73 +1,58 @@
-# Welcome to your Lovable project
+# GestorDoc
 
-## Project info
+Sistema de gestión de recibos y documentos contables. Permite a contadores (admin) gestionar clientes y sus recibos, y a los clientes subir y consultar sus documentos.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## Stack
 
-## How can I edit this code?
+- **Frontend**: React 18 + TypeScript + Vite
+- **UI**: shadcn/ui + Tailwind CSS
+- **Backend**: Supabase (PostgreSQL + Auth + Storage)
+- **Routing**: React Router v6
+- **Forms**: React Hook Form + Zod
+- **Estado del servidor**: TanStack Query
 
-There are several ways of editing your application.
+## Requisitos
 
-**Use Lovable**
+- Node.js 18+
+- npm
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+## Desarrollo local
 
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+```bash
+npm install
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+La app corre en `http://localhost:8080`.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Scripts
 
-**Use GitHub Codespaces**
+| Comando | Descripción |
+|---|---|
+| `npm run dev` | Servidor de desarrollo |
+| `npm run build` | Build de producción |
+| `npm run preview` | Preview del build |
+| `npm run test` | Ejecutar tests |
+| `npm run lint` | Linting |
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Estructura del proyecto
 
-## What technologies are used for this project?
+```
+src/
+├── features/         # Módulos de negocio (auth, admin, receipts, users)
+├── components/       # Componentes compartidos (layout, ui)
+├── hooks/            # Custom hooks globales
+├── integrations/     # Clientes externos (Supabase)
+├── lib/              # Utilidades
+├── pages/            # Páginas raíz (login, register, etc.)
+└── types/            # Tipos TypeScript
+```
 
-This project is built with:
+## Roles
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+- **ADMIN**: Contador. Gestiona clientes, aprueba cuentas, revisa recibos.
+- **CLIENT**: Cliente. Sube y consulta sus propios recibos.
 
-## How can I deploy this project?
+## Variables de entorno
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+El cliente de Supabase se configura en `src/integrations/supabase/client.ts`. Las credenciales se obtienen del proyecto Supabase correspondiente.

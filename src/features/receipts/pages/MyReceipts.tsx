@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/features/auth/context/AuthContext';
 import { AppLayout } from '@/components/layout/AppLayout';
-import { StatusBadge } from '@/components/receipts/StatusBadge';
+import { StatusBadge } from '@/features/receipts/components/StatusBadge';
 import { Button } from '@/components/ui/button';
 import {
   Select,

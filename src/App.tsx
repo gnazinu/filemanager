@@ -3,8 +3,8 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { AuthProvider } from "@/contexts/AuthContext";
-import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { AuthProvider } from "@/features/auth/context/AuthContext";
+import { ProtectedRoute } from "@/features/auth/components/ProtectedRoute";
 
 // Auth pages
 import Login from "./pages/Login";
@@ -13,13 +13,13 @@ import PendingApproval from "./pages/PendingApproval";
 import AccountInactive from "./pages/AccountInactive";
 
 // Client pages
-import MyReceipts from "./pages/client/MyReceipts";
-import UploadReceipt from "./pages/client/UploadReceipt";
+import MyReceipts from "@/features/receipts/pages/MyReceipts";
+import UploadReceipt from "@/features/receipts/pages/UploadReceipt";
 
 // Admin pages
-import AdminDashboard from "./pages/admin/AdminDashboard";
-import AdminReceipts from "./pages/admin/AdminReceipts";
-import AdminClients from "./pages/admin/AdminClients";
+import AdminDashboard from "@/features/admin/pages/AdminDashboard";
+import AdminReceipts from "@/features/admin/pages/AdminReceipts";
+import AdminClients from "@/features/admin/pages/AdminClients";
 
 // Other
 import NotFound from "./pages/NotFound";

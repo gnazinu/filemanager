@@ -98,6 +98,135 @@ export type Database = {
         }
         Relationships: []
       }
+      fiscal_config: {
+        Row: {
+          id: string
+          user_id: string
+          rfc_emisor: string
+          razon_social_emisor: string
+          regimen_fiscal: string
+          cp_emisor: string
+          facturama_username: string
+          facturama_password: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          rfc_emisor: string
+          razon_social_emisor: string
+          regimen_fiscal: string
+          cp_emisor: string
+          facturama_username: string
+          facturama_password: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          rfc_emisor?: string
+          razon_social_emisor?: string
+          regimen_fiscal?: string
+          cp_emisor?: string
+          facturama_username?: string
+          facturama_password?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      invoices: {
+        Row: {
+          id: string
+          user_id: string
+          receipt_id: string | null
+          folio_fiscal: string | null
+          pac_invoice_id: string | null
+          xml_storage_path: string | null
+          pdf_storage_path: string | null
+          status: Database["public"]["Enums"]["invoice_status"]
+          cancel_reason: string | null
+          cancel_motivo_sat: string | null
+          cfdi_data: Json
+          error_message: string | null
+          attempt_count: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          receipt_id?: string | null
+          folio_fiscal?: string | null
+          pac_invoice_id?: string | null
+          xml_storage_path?: string | null
+          pdf_storage_path?: string | null
+          status?: Database["public"]["Enums"]["invoice_status"]
+          cancel_reason?: string | null
+          cancel_motivo_sat?: string | null
+          cfdi_data: Json
+          error_message?: string | null
+          attempt_count?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          receipt_id?: string | null
+          folio_fiscal?: string | null
+          pac_invoice_id?: string | null
+          xml_storage_path?: string | null
+          pdf_storage_path?: string | null
+          status?: Database["public"]["Enums"]["invoice_status"]
+          cancel_reason?: string | null
+          cancel_motivo_sat?: string | null
+          cfdi_data?: Json
+          error_message?: string | null
+          attempt_count?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      invoice_items: {
+        Row: {
+          id: string
+          invoice_id: string
+          description: string
+          quantity: number
+          unit_value: number
+          amount: number
+          iva_rate: number
+          iva_amount: number
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          invoice_id: string
+          description: string
+          quantity: number
+          unit_value: number
+          amount: number
+          iva_rate: number
+          iva_amount: number
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          invoice_id?: string
+          description?: string
+          quantity?: number
+          unit_value?: number
+          amount?: number
+          iva_rate?: number
+          iva_amount?: number
+          created_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -109,11 +238,24 @@ export type Database = {
       }
       is_admin: { Args: { _user_id: string }; Returns: boolean }
       is_approved: { Args: { _user_id: string }; Returns: boolean }
+      pgmq_send: {
+        Args: { queue_name: string; msg: Json }
+        Returns: number
+      }
+      pgmq_read: {
+        Args: { queue_name: string; vt: number; qty: number }
+        Returns: Array<{ msg_id: number; message: Json }>
+      }
+      pgmq_delete: {
+        Args: { queue_name: string; msg_id: number }
+        Returns: boolean
+      }
     }
     Enums: {
       account_status: "pending" | "approved" | "inactive"
       app_role: "admin" | "client"
       receipt_status: "new" | "reviewed" | "invoiced" | "archived"
+      invoice_status: "PENDING" | "STAMPED" | "FAILED" | "CANCELLED"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -244,6 +386,7 @@ export const Constants = {
       account_status: ["pending", "approved", "inactive"],
       app_role: ["admin", "client"],
       receipt_status: ["new", "reviewed", "invoiced", "archived"],
+      invoice_status: ["PENDING", "STAMPED", "FAILED", "CANCELLED"],
     },
   },
 } as const

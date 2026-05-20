@@ -1,4 +1,4 @@
-# GestorDoc
+# File Manager
 
 Sistema de gestión de recibos y documentos contables. Permite a contadores (admin) gestionar clientes y sus recibos, y a los clientes subir y consultar sus documentos.
 

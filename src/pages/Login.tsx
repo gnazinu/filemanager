@@ -67,7 +67,7 @@ export default function Login() {
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-primary shadow-md">
             <Receipt className="h-7 w-7 text-primary-foreground" />
           </div>
-          <CardTitle className="text-2xl font-bold">GestorDoc</CardTitle>
+          <CardTitle className="text-2xl font-bold">File Manager</CardTitle>
           <CardDescription>
             Ingresa tus datos para acceder a tu cuenta
           </CardDescription>

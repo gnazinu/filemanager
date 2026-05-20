@@ -13,6 +13,7 @@ import {
   Menu,
   X,
   ChevronLeft,
+  FilePlus,
 } from 'lucide-react';
 
 
@@ -30,8 +31,10 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const clientNavItems: NavItem[] = [
-    { label: 'Mis Recibos', href: '/my-receipts', icon: Receipt },
-    { label: 'Subir Recibo', href: '/upload', icon: Upload },
+    { label: 'Mis Recibos',   href: '/my-receipts',  icon: Receipt   },
+    { label: 'Subir Recibo',  href: '/upload',        icon: Upload    },
+    { label: 'Mis Facturas',  href: '/invoices',      icon: FileText  },
+    { label: 'Nueva Factura', href: '/invoices/new',  icon: FilePlus  },
   ];
 
   const adminNavItems: NavItem[] = [
@@ -63,7 +66,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
                 <Receipt className="h-4 w-4 text-primary-foreground" />
               </div>
-              <span className="font-semibold">GestorDoc</span>
+              <span className="font-semibold">File Manager</span>
             </Link>
           )}
           <Button
@@ -129,7 +132,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
               <Receipt className="h-4 w-4 text-primary-foreground" />
             </div>
-            <span className="font-semibold">GestorDoc</span>
+            <span className="font-semibold">File Manager</span>
           </Link>
           <Button
             variant="ghost"

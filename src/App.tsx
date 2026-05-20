@@ -21,6 +21,10 @@ import AdminDashboard from "@/features/admin/pages/AdminDashboard";
 import AdminReceipts from "@/features/admin/pages/AdminReceipts";
 import AdminClients from "@/features/admin/pages/AdminClients";
 
+// Invoicing pages
+import InvoiceList   from "@/features/invoicing/pages/InvoiceList";
+import CreateInvoice from "@/features/invoicing/pages/CreateInvoice";
+
 // Other
 import NotFound from "./pages/NotFound";
 import Index from "./pages/Index";
@@ -98,6 +102,24 @@ const App = () => (
               }
             />
             
+            {/* Invoice routes */}
+            <Route
+              path="/invoices"
+              element={
+                <ProtectedRoute requireApproved>
+                  <InvoiceList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/invoices/new"
+              element={
+                <ProtectedRoute requireApproved>
+                  <CreateInvoice />
+                </ProtectedRoute>
+              }
+            />
+
             {/* Catch-all */}
             <Route path="*" element={<NotFound />} />
           </Routes>

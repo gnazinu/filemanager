@@ -38,9 +38,11 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   ];
 
   const adminNavItems: NavItem[] = [
-    { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },
-    { label: 'Todos los Recibos', href: '/admin/receipts', icon: Receipt },
-    { label: 'Gestión de Clientes', href: '/admin/clients', icon: Users },
+    { label: 'Dashboard',          href: '/admin',          icon: LayoutDashboard },
+    { label: 'Todos los Recibos',  href: '/admin/receipts', icon: Receipt         },
+    { label: 'Gestión de Clientes',href: '/admin/clients',  icon: Users           },
+    { label: 'Facturas',           href: '/invoices',       icon: FileText        },
+    { label: 'Nueva Factura',      href: '/invoices/new',   icon: FilePlus        },
   ];
 
   const navItems = isAdmin ? adminNavItems : clientNavItems;
